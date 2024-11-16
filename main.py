@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 app = FastAPI()
 
-#
+#fd
 class Target(BaseModel):
     id: int
     title: str
