@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 
 class Target(BaseModel):
-    id: int
+    id: Optional[int] = None  # id необязательно, так как он генерируется базой данных
     title: str
     description: str
     completed: bool

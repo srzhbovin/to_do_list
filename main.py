@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from views import targets as todo_targets
+from targets.views import targets as todo_targets
 
 app = FastAPI()
 
