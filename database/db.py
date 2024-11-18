@@ -45,6 +45,18 @@ def insert_data(db_conn, data):
         )
 
 
+def update_target(db_conn, title, new_title, new_description, new_completed):
+    with db_conn.cursor() as cursor:
+        cursor.execute('UPDATE targets SET title=%s, description=%s, completed=%s WHERE title = %s',
+                       (new_title, new_description, new_completed, title))
+        print(f'Цель {title} обновлена')
+
+
+def change_status(db_conn, title: str, completed: bool):
+    with db_conn.cursor() as cursor:
+        cursor.execute('UPDATE targets SET completed=%s WHERE title= %s', (completed, title))
+
+
 def del_target(db_conn, title):
     with db_conn.cursor() as cursor:
         cursor.execute('DELETE FROM targets WHERE title = %s', (title,))
