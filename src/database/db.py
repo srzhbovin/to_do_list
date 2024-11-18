@@ -1,6 +1,6 @@
 # Импорт необходимых библиотек
 import psycopg2
-from database.config_db import host, db_name, db_password, db_user, port
+from src.database.config_db import host, db_name, db_password, db_user, port
 
 
 # Подключение к базе данных
@@ -37,19 +37,27 @@ def select_data(db_conn):
         return [dict(zip(columns, row)) for row in data]
 
 
-def insert_data(db_conn, data):
+def insert_data(db_conn, title, description, completed, created_at):
     with db_conn.cursor() as cursor:
         cursor.execute(
             "INSERT INTO targets (title, description, completed, created_at) VALUES (%s, %s, %s, %s)",
-            (data['title'], data['description'], data['completed'], data['created_at'])
+            (title, description, completed, created_at)
         )
+        db_conn.commit()
 
 
-def update_target(db_conn, title, new_title, new_description, new_completed):
+def change_target(db_conn, title, new_title=None, new_description=None):
     with db_conn.cursor() as cursor:
-        cursor.execute('UPDATE targets SET title=%s, description=%s, completed=%s WHERE title = %s',
-                       (new_title, new_description, new_completed, title))
-        print(f'Цель {title} обновлена')
+        if (new_title is None or new_title == 'string') and (new_description is None or new_description == 'string'):
+            return None
+        if new_title is None or new_title == 'string':
+            cursor.execute('SELECT title FROM targets WHERE title = %s', (title,))
+            new_title = cursor.fetchone()[0]
+        if new_description is None or new_description == 'string':
+            cursor.execute('SELECT description FROM targets WHERE title = %s', (title,))
+            new_description = cursor.fetchone()[0]
+        cursor.execute('UPDATE targets SET title = %s, description =%s WHERE title = %s', (new_title, new_description, title))
+        print(f'цЕль {title} обновлена.')
 
 
 def change_status(db_conn, title: str, completed: bool):

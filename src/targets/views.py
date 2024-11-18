@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 from typing import List
 
-from database.db import connect_to_db, select_data, close_connection, insert_data, del_target, update_target, \
-    change_status
-from targets.models import Target, UpdateTarget
+from src.database.db import connect_to_db, select_data, close_connection, insert_data, del_target,  \
+    change_status, change_target
+from src.targets.models import Target, UpdateTarget, TargetCreate
 
 targets = APIRouter()
 
@@ -17,21 +17,24 @@ def get_all_targets():
 
 
 @targets.post('/todo/new_target')
-def add_target(target: Target):
+def add_target(target_create: TargetCreate):
+    target = Target(
+        title=target_create.title,
+        description=target_create.description
+    )
     db_conn = connect_to_db()
-    insert_data(db_conn, target.dict())
+    insert_data(db_conn, target.title, target.description, target.completed, target.created_at)
     close_connection(db_conn)
-
+    return {"message": "Target added successfully"}
 
 @targets.put('/todo/update/{title}')
-def upd_target(target: UpdateTarget, title: str):
+def update_target(target: UpdateTarget, title: str):
     db_conn = connect_to_db()
-    update_target(
+    change_target(
         db_conn,
         title,
         target.title,
-        target.description,
-        target.completed)
+        target.description)
     close_connection(db_conn)
 
 
