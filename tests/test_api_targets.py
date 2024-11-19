@@ -8,34 +8,37 @@ def client():
     return TestClient(app)
 
 
-def test_get_all_targets(client):
-    response = client.get('/todo')
+@pytest.mark.asyncio
+async def test_get_all_targets(client):
+    response = await client.get('/todo')
     print(response)
     print(response.json())
     assert response.status_code == 200
 
 
-def test_add_target(client):
+@pytest.mark.asyncio
+async def test_add_target(client):
     data = {
         "title": 'do it',
         'description': 'about it'
     }
-    response = client.post('/todo/new_target', json=data)
+    response = await client.post('/todo/new_target', json=data)
     assert response.status_code == 200
 
 
-def test_update_target(client):
+@pytest.mark.asyncio
+async def test_update_target(client):
     data = {
         "new_title": 'do_something_else',
         "new_description": 'something more about it'
     }
     title = 'ddd'
-    response = client.put(f'/todo/update/{title}', json=data)
+    response = await client.put(f'/todo/update/{title}', json=data)
     assert response.status_code == 200
 
 
-def test_delete_tatget(client):
-    title = {'title': 'do it'}
-    response = client.delete(f'/todo/delete/{title}')
+@pytest.mark.asyncio
+async def test_delete_target(client):
+    title = 'do it'
+    response = await client.delete(f'/todo/delete/{title}')
     assert response.status_code == 200
-
